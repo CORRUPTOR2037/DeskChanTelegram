@@ -81,14 +81,12 @@ class App {
                     lastUpdates.put(currentChat, 0);
                 }
                 SendTalkRequest("HELLO");
-                System.out.println("all okay");
             } else SendTalkRequest("REFUSE");
             return;
         }
         //SendTalkRequest("CHAT");
     }
     static void Send(String text){
-        System.out.println(currentChat);
         if(currentChat==null) return;
         SendMessage request = new SendMessage(currentChat.id(), text);
         request.parseMode(ParseMode.HTML);
@@ -97,7 +95,6 @@ class App {
         SendResponse sendResponse = bot.execute(request);
         boolean ok = sendResponse.isOk();
         Message message = sendResponse.message();
-        //System.out.println(ok+" "+message);
     }
     static void SendTalkRequest(String type){
         Main.getPluginProxy().sendMessage("talk:request",new HashMap<String, Object>() {{
@@ -113,7 +110,6 @@ class App {
         }
         skipHistory=false;
         lastUpdates=new HashMap<Chat,Integer>();
-        System.out.println(lastUpdates);
         bot = TelegramBotAdapter.build(token);
         getUpdates = new GetUpdates().limit(100).offset(0).timeout(1000);
 
@@ -121,8 +117,6 @@ class App {
         GetChat chatRequest=new GetChat(masterId);
         GetChatResponse resp=bot.execute(chatRequest);
         currentChat=resp.chat();
-
-        System.out.println(currentChat);
 
         lastUpdates.put(currentChat,0);
 
