@@ -63,7 +63,7 @@ class App {
     private static GetUpdates getUpdates;
     private static HashMap<Chat,Integer> lastUpdates;
     private static Chat currentChat=null;
-    private static String selfName="@five_nine_one_bot";
+    private static String selfName="@name";
     public static Integer masterId=null;
     public static String token=null;
     private static ChatHandler handler=new ChatHandler();

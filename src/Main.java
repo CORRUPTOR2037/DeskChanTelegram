@@ -122,7 +122,7 @@ public class Main implements Plugin {
 
     public void unload(){
         Properties properties = new Properties();
-        properties.setProperty("token", App.token);
+        if(App.token!=null) properties.setProperty("token", App.token);
         try {
             OutputStream ip = Files.newOutputStream(pluginProxy.getDataDirPath().resolve("config.properties"));
             properties.store(ip, "config fot telegram api");
