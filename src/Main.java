@@ -30,7 +30,8 @@ public class Main implements Plugin {
             }
             if (properties != null) {
                 try {
-                    App.token = properties.getProperty("token");
+                    App.token = properties.getProperty("token","");
+                    App.masterId = Integer.parseInt(properties.getProperty("masterId",""));
                 } catch (Exception e) {
                 }
             }
@@ -40,6 +41,11 @@ public class Main implements Plugin {
             put("msgTag", "telegram:start");
         }});
         pluginProxy.addMessageListener("telegram:start", (sender, tag, data) -> {
+            pluginProxy.sendMessage("core:change-alternative-priority",new HashMap<String, Object>() {{
+                put("srcTag", "DeskChan:say");
+                put("dstTag", "telegram:send");
+                put("priority", 500);
+            }});
             App.Start();
         });
         pluginProxy.addMessageListener("telegram:options-saved",(sender, tag, da) -> {
@@ -49,6 +55,7 @@ public class Main implements Plugin {
             if(data.containsKey("id"))
                 App.masterId=Integer.parseInt((String) data.get("id"));
             updateMenu();
+            saveSettings();
         });
         pluginProxy.sendMessage("DeskChan:register-simple-action", new HashMap<String, Object>() {{
             put("name", pluginProxy.getString("stop"));
@@ -56,9 +63,16 @@ public class Main implements Plugin {
         }});
         pluginProxy.addMessageListener("telegram:stop", (sender, tag, data) -> {
             App.Stop();
+            pluginProxy.sendMessage("core:change-alternative-priority",new HashMap<String, Object>() {{
+                put("srcTag", "DeskChan:say");
+                put("dstTag", "telegram:send");
+                put("priority", 50);
+            }});
         });
-        pluginProxy.sendMessage("talk:add-reciever",new HashMap<String, Object>() {{
-            put("tag", "telegram:send");
+        pluginProxy.sendMessage("core:register-alternative",new HashMap<String, Object>() {{
+            put("srcTag", "DeskChan:say");
+            put("dstTag", "telegram:send");
+            put("priority", 50);
         }});
         pluginProxy.addMessageListener("telegram:send", (sender, tag, data) -> {
             Map<String, Object> da = (Map<String, Object>) data;
@@ -120,9 +134,10 @@ public class Main implements Plugin {
 
     static PluginProxyInterface getPluginProxy() { return pluginProxy; }
 
-    public void unload(){
+    public void saveSettings(){
         Properties properties = new Properties();
         if(App.token!=null) properties.setProperty("token", App.token);
+        if(App.masterId!=null) properties.setProperty("masterId", App.masterId.toString());
         try {
             OutputStream ip = Files.newOutputStream(pluginProxy.getDataDirPath().resolve("config.properties"));
             properties.store(ip, "config fot telegram api");
@@ -130,5 +145,9 @@ public class Main implements Plugin {
         } catch (IOException e) {
             log(e);
         }
+    }
+    public void unload(){
+        App.Stop();
+        saveSettings();
     }
 }
