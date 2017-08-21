@@ -26,11 +26,11 @@ class App {
                 GetUpdatesResponse response = bot.execute(getUpdates);
                 List<Update> updates = response.updates();
                 for (Update update : updates) {
-                    //System.out.println(update.message());
                     if(update.message()==null) continue;
                     if (!lastUpdates.containsKey(update.message().chat()))
                         lastUpdates.put(update.message().chat(),0);
                     if (lastUpdates.get(update.message().chat()) >= update.updateId()) continue;
+                    getUpdates.offset(update.updateId());
                     lastUpdates.replace(update.message().chat(),update.updateId());
                     if (update.message()==null || update.message().text()==null) continue;
                     if(!skipHistory) continue;
@@ -70,7 +70,6 @@ class App {
     static void AnalyzeMessage(Message message){
         String text=message.text();
         text=text.replace(selfName,"");
-        System.out.println(text);
         String[] words=text.split(" ");
         if(words[0].equals("/notice")){
             if(message.from().id().equals(masterId)){
@@ -84,6 +83,9 @@ class App {
             } else SendTalkRequest("REFUSE");
             return;
         }
+        HashMap map=new HashMap<String,Object>();
+        map.put("value",text);
+        Main.getPluginProxy().sendMessage("DeskChan:user-said",map);
         //SendTalkRequest("CHAT");
     }
     static void Send(String text){

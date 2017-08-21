@@ -75,6 +75,10 @@ public class Main implements Plugin {
             put("priority", 50);
         }});
         pluginProxy.addMessageListener("telegram:send", (sender, tag, data) -> {
+            if (data instanceof String) {
+                App.Send((String) data);
+                return;
+            }
             Map<String, Object> da = (Map<String, Object>) data;
             if(da.containsKey("text"))
                 App.Send((String)da.get("text"));
@@ -87,8 +91,8 @@ public class Main implements Plugin {
     }
 
     void updateMenu(){
-        pluginProxy.sendMessage("gui:setup-options-tab", new HashMap<String, Object>() {{
-            put("name", "Telegram" );
+        pluginProxy.sendMessage("gui:setup-options-submenu", new HashMap<String, Object>() {{
+            put("name", getString("options") );
             put("msgTag", "telegram:options-saved");
             List<HashMap<String, Object>> list = new LinkedList<HashMap<String, Object>>();
             list.add(new HashMap<String, Object>() {{
