@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import com.sun.org.apache.xerces.internal.xs.StringList;
 import info.deskchan.core.*;
 
 public class Main implements Plugin {
@@ -36,10 +37,16 @@ public class Main implements Plugin {
                 }
             }
         } catch(Exception e){ pluginProxy.log(e); }
-        pluginProxy.sendMessage("DeskChan:register-simple-action", new HashMap<String, Object>() {{
+        ArrayList<HashMap<String,Object>> actions = new ArrayList<HashMap<String,Object>>();
+        actions.add(new HashMap<String, Object>() {{
             put("name", pluginProxy.getString("start"));
             put("msgTag", "telegram:start");
         }});
+        actions.add(new HashMap<String, Object>() {{
+            put("name", pluginProxy.getString("stop"));
+            put("msgTag", "telegram:stop");
+        }});
+        pluginProxy.sendMessage("DeskChan:register-simple-actions", actions);
         pluginProxy.addMessageListener("telegram:start", (sender, tag, data) -> {
             pluginProxy.sendMessage("core:change-alternative-priority",new HashMap<String, Object>() {{
                 put("srcTag", "DeskChan:say");
@@ -57,10 +64,6 @@ public class Main implements Plugin {
             updateMenu();
             saveSettings();
         });
-        pluginProxy.sendMessage("DeskChan:register-simple-action", new HashMap<String, Object>() {{
-            put("name", pluginProxy.getString("stop"));
-            put("msgTag", "telegram:stop");
-        }});
         pluginProxy.addMessageListener("telegram:stop", (sender, tag, data) -> {
             App.Stop();
             pluginProxy.sendMessage("core:change-alternative-priority",new HashMap<String, Object>() {{
@@ -99,19 +102,22 @@ public class Main implements Plugin {
                 put("id", "token");
                 put("type", "TextField");
                 put("label", "Token");
+                put("hint", Main.getString("info.token"));
                 put("value", App.token);
             }});
             list.add(new HashMap<String, Object>() {{
                 put("id", "id");
                 put("type", "TextField");
-                put("label", "Id");
+                put("label", "ID");
+                put("hint", Main.getString("info.id"));
                 put("value", App.masterId);
             }});
             list.add(new HashMap<String, Object>() {{
                 put("id", "text");
                 put("type", "TextField");
-                put("label", "Send message");
+                put("label", Main.getString("send"));
                 put("enterTag","telegram:send");
+                put("hint", Main.getString("info.send"));
                 put("value", "");
             }});
             put("controls", list);

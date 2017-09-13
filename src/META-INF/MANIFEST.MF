@@ -1,3 +1,6 @@
 Manifest-Version: 1.0
 Main-Class: Main
-
+Version: 0.2.2,
+Authors: DeskChan Project <support@deskchan.info> (http://deskchan.info),
+Short-Description: Module for communication with DeskChan through Telegram Messenger. Create bot, set its token and your id in settings, press "Start",
+Resources: resources.strings
